@@ -1,610 +1,354 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SevElictricDirectory — Справочник по тюнингу</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  
-  :root {
-    --neon: #00f0ff;
-    --neon2: #ff00e5;
-    --dark: #050510;
-    --darker: #020208;
-    --card-bg: rgba(15, 15, 25, 0.8);
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEVELECTRIC | Справочник компонентов</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f9f9fb;
+      --surface: #ffffff;
+      --text: #111111;
+      --text-secondary: #6b6b70;
+      --border: #e5e5ea;
+      --accent: #0071e3;
+      --accent-soft: #eef5ff;
+      --radius: 10px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.5; -webkit-font-smoothing: antialiased;
+    }
+    #preloader {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9999; transition: opacity 0.4s;
+    }
+    .loader-text { font-size: 1.2rem; font-weight: 700; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100% { opacity:0.3; } 50% { opacity:1; } }
+    .main-content { opacity: 0; transition: opacity 0.6s; max-width: 1400px; margin: 0 auto; padding: 0 24px 60px; }
 
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: var(--dark);
-    color: #fff;
-    overflow-x: hidden;
-  }
+    /* Header */
+    .site-header { padding: 40px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; }
+    .site-title { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .site-subtitle { font-size: 0.9rem; color: var(--text-secondary); }
 
-  /* === АНИМИРОВАННЫЙ ФОН === */
-  .bg-grid {
-    position: fixed;
-    inset: 0;
-    background-image: 
-      linear-gradient(rgba(0,240,255,.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,240,255,.05) 1px, transparent 1px);
-    background-size: 60px 60px;
-    perspective: 500px;
-    z-index: 0;
-    animation: gridMove 20s linear infinite;
-  }
-  @keyframes gridMove {
-    from { background-position: 0 0; }
-    to { background-position: 0 60px; }
-  }
+    /* Search */
+    .search-wrap { position: relative; flex: 1; max-width: 400px; min-width: 250px; }
+    .search-input {
+      width: 100%; padding: 12px 16px 12px 42px; border-radius: 30px;
+      border: 1px solid var(--border); background: var(--surface);
+      font-size: 0.9rem; color: var(--text); outline: none; transition: 0.2s;
+    }
+    .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,0.1); }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 1.1rem; pointer-events: none; }
 
-  .glow-orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(120px);
-    z-index: 0;
-    pointer-events: none;
-  }
-  .orb1 {
-    width: 500px; height: 500px;
-    background: rgba(0,240,255,.15);
-    top: -150px; left: -150px;
-    animation: float1 12s ease-in-out infinite;
-  }
-  .orb2 {
-    width: 400px; height: 400px;
-    background: rgba(255,0,229,.1);
-    bottom: -100px; right: -100px;
-    animation: float2 15s ease-in-out infinite;
-  }
-  @keyframes float1 {
-    0%,100% { transform: translate(0,0) scale(1); }
-    50% { transform: translate(100px,80px) scale(1.2); }
-  }
-  @keyframes float2 {
-    0%,100% { transform: translate(0,0) scale(1); }
-    50% { transform: translate(-80px,-60px) scale(1.15); }
-  }
+    /* Filters */
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .filter-btn {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-secondary); padding: 8px 18px; border-radius: 20px;
+      cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: 0.15s;
+    }
+    .filter-btn:hover, .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-  /* === ХЕДЕР === */
-  header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 6%;
-    z-index: 100;
-    backdrop-filter: blur(12px);
-    background: rgba(5,5,16,.7);
-    border-bottom: 1px solid rgba(0,240,255,.15);
-  }
+    /* Table */
+    .table-section { margin-bottom: 40px; }
+    .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .table-title { font-size: 1.1rem; font-weight: 700; }
+    .table-toggle { background: none; border: none; color: var(--accent); cursor: pointer; font-weight: 600; font-size: 0.8rem; }
+    .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; white-space: nowrap; }
+    .compare-table th, .compare-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+    .compare-table th { background: #f2f2f7; font-weight: 700; color: var(--text-secondary); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table td { color: var(--text); font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.75rem; }
+    .compare-table .yes { color: #28a745; font-weight: 700; }
+    .compare-table .no { color: #ccc; }
 
-  .logo {
-    font-size: 1.4rem;
-    font-weight: 900;
-    letter-spacing: 2px;
-    background: linear-gradient(90deg, var(--neon), var(--neon2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: logoPulse 3s ease-in-out infinite;
-    text-decoration: none;
-  }
-  @keyframes logoPulse {
-    0%,100% { filter: drop-shadow(0 0 8px rgba(0,240,255,.6)); }
-    50% { filter: drop-shadow(0 0 20px rgba(255,0,229,.8)); }
-  }
+    /* Grid */
+    .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 
-  /* === HERO === */
-  .hero {
-    position: relative;
-    padding: 160px 20px 60px;
-    text-align: center;
-    z-index: 1;
-  }
+    /* Card */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px;
+      display: flex; flex-direction: column; transition: 0.2s; box-shadow: var(--shadow);
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-img {
+      width: 100%; height: 140px; background: #f0f0f5; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px; overflow: hidden; border: 1px solid var(--border);
+    }
+    .card-img svg { width: 70px; height: 70px; opacity: 0.6; }
+    .card-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+    .card-head-text { flex: 1; min-width: 0; }
+    .card-title { font-size: 0.9rem; font-weight: 700; line-height: 1.3; margin-bottom: 2px; }
+    .card-brand { font-size: 0.65rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; }
+    .card-specs { font-size: 0.72rem; color: var(--text-secondary); background: #f5f5fa; padding: 6px 10px; border-radius: 6px; margin-bottom: 8px; font-family: 'SF Mono', monospace; line-height: 1.4; border: 1px solid var(--border); }
+    .card-desc { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45; flex-grow: 1; margin-bottom: 10px; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 10px; gap: 8px; }
+    .card-price { font-weight: 800; font-size: 0.85rem; color: var(--text); }
+    .card-tag { font-size: 0.6rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; }
 
-  .hero h1 {
-    font-size: clamp(2rem, 6vw, 4rem);
-    font-weight: 900;
-    line-height: 1.1;
-    text-transform: uppercase;
-    background: linear-gradient(180deg, #fff 30%, var(--neon) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: heroIn 1s cubic-bezier(.16,1,.3,1) both;
-    text-shadow: 0 0 60px rgba(0,240,255,.3);
-  }
-  @keyframes heroIn {
-    from { opacity: 0; transform: translateY(40px); filter: blur(10px); }
-    to { opacity: 1; transform: translateY(0); filter: blur(0); }
-  }
+    .empty-msg { text-align: center; padding: 60px 20px; color: var(--text-secondary); font-size: 0.9rem; grid-column: 1 / -1; }
 
-  .hero p {
-    margin-top: 20px;
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    color: #889;
-    max-width: 700px;
-    margin-inline: auto;
-    animation: fadeUp 1s .3s both;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* === ФИЛЬТРЫ === */
-  .filters {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin: 40px auto;
-    max-width: 900px;
-    z-index: 2;
-    position: relative;
-    animation: fadeUp 1s .5s both;
-  }
-
-  .filter-btn {
-    padding: 12px 25px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(0,240,255,.3);
-    color: #ccc;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    transition: all 0.3s;
-  }
-  .filter-btn:hover {
-    background: rgba(0,240,255,.1);
-    color: #fff;
-  }
-  .filter-btn.active {
-    background: linear-gradient(90deg, var(--neon), var(--neon2));
-    color: var(--dark);
-    border-color: transparent;
-    font-weight: bold;
-    box-shadow: 0 0 20px rgba(0,240,255,.4);
-  }
-
-  /* === СЕТКА ТОВАРОВ === */
-  .catalog {
-    padding: 20px 6% 100px;
-    position: relative;
-    z-index: 1;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 30px;
-  }
-
-  .product {
-    background: var(--card-bg);
-    border: 1px solid rgba(0,240,255,.2);
-    border-radius: 20px;
-    padding: 30px;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.4s, border-color 0.4s, box-shadow 0.4s;
-    opacity: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .product:hover {
-    transform: translateY(-8px);
-    border-color: var(--neon);
-    box-shadow: 0 15px 40px rgba(0,240,255,.15);
-  }
-
-  .product::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(0,240,255,.1), transparent 60%);
-    opacity: 0;
-    transition: opacity .3s;
-    pointer-events: none;
-  }
-  .product:hover::before { opacity: 1; }
-
-  .product-category {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--neon);
-    margin-bottom: 10px;
-    font-weight: bold;
-  }
-
-  .product h3 {
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-    color: #fff;
-  }
-
-  .product-desc {
-    color: #99a;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-bottom: 20px;
-    flex-grow: 1;
-  }
-
-  .product-specs {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255,255,255,.1);
-  }
-  
-  .product-specs div {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: #778;
-    margin-bottom: 5px;
-  }
-  .product-specs span:last-child {
-    color: #ccd;
-    text-align: right;
-  }
-
-  .product-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .price {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: var(--neon);
-    text-shadow: 0 0 10px rgba(0,240,255,.3);
-  }
-  
-  .price small {
-    font-size: 0.7rem;
-    color: #667;
-    display: block;
-    text-shadow: none;
-    font-weight: normal;
-  }
-
-  /* === ФУТЕР === */
-  footer {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 40px 20px 60px;
-    color: #556;
-    font-size: 0.9rem;
-    border-top: 1px solid rgba(255,255,255,.05);
-  }
-
-  .creator-line {
-    margin-top: 25px;
-    padding-top: 25px;
-    border-top: 1px solid rgba(0,240,255,.1);
-    font-size: 1rem;
-    color: #889;
-    letter-spacing: 1px;
-  }
-  
-  .creator-line span {
-    color: var(--neon);
-    font-weight: bold;
-    text-shadow: 0 0 10px rgba(0,240,255,.4);
-  }
-
-  @media (max-width: 600px) {
-    .filters { gap: 10px; }
-    .filter-btn { padding: 8px 15px; font-size: 0.85rem; }
-  }
-</style>
+    @media (max-width: 600px) {
+      .catalog-grid { grid-template-columns: 1fr; }
+      .site-header { flex-direction: column; align-items: flex-start; }
+      .search-wrap { max-width: 100%; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="bg-grid"></div>
-<div class="glow-orb orb1"></div>
-<div class="glow-orb orb2"></div>
+  <div id="preloader"><div class="loader-text">SEVELECTRIC</div></div>
 
-<header>
-  <a href="#" class="logo">SevElictricDirectory</a>
-</header>
+  <div class="main-content" id="mainContent">
 
-<section class="hero">
-  <h1>Справочник компонентов</h1>
-  <p>База знаний для прокачки электросамокатов. Ориентировочные цены, технические характеристики и описание совместимости — чтобы вы понимали, что и зачем менять.</p>
-</section>
-
-<div class="filters">
-  <button class="filter-btn active" data-filter="all">Все категории</button>
-  <button class="filter-btn" data-filter="motor">Моторы</button>
-  <button class="filter-btn" data-filter="battery">Батареи</button>
-  <button class="filter-btn" data-filter="controller">Контроллеры</button>
-  <button class="filter-btn" data-filter="brakes">Тормоза и подвеска</button>
-</div>
-
-<section class="catalog">
-  <div class="grid" id="productGrid">
-    
-    <!-- ================= КОНТРОЛЛЕРЫ ================= -->
-
-    <!-- Fardriver ND72450 -->
-    <div class="product" data-category="controller">
-      <div class="product-category">Контроллер</div>
-      <h3>Fardriver ND72450</h3>
-      <div class="product-desc">
-        Программируемый FOC-контроллер с Bluetooth для тонкой настройки. Поддерживает моторы 2000–4000W. Синусоидальный выход, водозащита IP67. Популярный выбор для мощных кастомов с возможностью менять ток и фазовые углы через приложение.
+    <header class="site-header">
+      <div>
+        <h1 class="site-title">Справочник компонентов</h1>
+        <p class="site-subtitle">Контроллеры · Подвеска · Тормоза · Батареи и BMS</p>
       </div>
-      <div class="product-specs">
-        <div><span>Напряжение:</span> <span>72V</span></div>
-        <div><span>Макс. фазный ток:</span> <span>450A</span></div>
-        <div><span>Мощность мотора:</span> <span>2–4 kW</span></div>
-        <div><span>Связь:</span> <span>Bluetooth</span></div>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="Поиск по названию, бренду или характеристикам...">
       </div>
-      <div class="product-footer">
-        <div class="price">~$188 <small>/ ~18 000 ₽</small></div>
+    </header>
+
+    <!-- Таблица сравнения контроллеров (VESC Labs) -->
+    <div class="table-section">
+      <div class="table-header">
+        <h2 class="table-title">Сравнение контроллеров VESC Labs</h2>
+        <button class="table-toggle" id="tableToggle">Свернуть таблицу</button>
+      </div>
+      <div class="table-wrap" id="tableWrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Продукт</th>
+              <th>Напряжение (макс)</th>
+              <th>Батарея (макс)</th>
+              <th>Ток (пост.)</th>
+              <th>Ток (пик)</th>
+              <th>Dual</th>
+              <th>5V</th>
+              <th>12V</th>
+              <th>ESP32</th>
+              <th>IMU</th>
+              <th>Память</th>
+              <th>Измерение тока</th>
+              <th>Влагозащита</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>VESC Minim 100V</td><td>100V</td><td>22S</td><td>50A</td><td>65A</td><td class="no">—</td><td>2A</td><td class="no">—</td><td class="no">—</td><td class="yes">Да</td><td class="no">—</td><td>Low Side</td><td class="no">—</td></tr>
+            <tr><td>VESC Duet XS 60V</td><td>60V</td><td>13S</td><td>80A</td><td>100A</td><td class="yes">Да</td><td>1A</td><td>0.5A</td><td class="no">—</td><td class="yes">Да</td><td class="no">—</td><td>Low Side</td><td class="no">—</td></tr>
+            <tr><td>VESC Duet XS 100V</td><td>100V</td><td>22S</td><td>50A</td><td>65A</td><td class="yes">Да</td><td>1A</td><td>0.5A</td><td class="no">—</td><td class="yes">Да</td><td class="no">—</td><td>Low Side</td><td class="no">—</td></tr>
+            <tr><td>VESC Duet</td><td>100V</td><td>22S</td><td>140A</td><td>200A</td><td class="yes">Да</td><td>1A</td><td>0.8A</td><td class="yes">Да</td><td class="yes">Да</td><td>512MB</td><td>Low Side</td><td class="no">—</td></tr>
+            <tr><td>VESC Classic 100V</td><td>100V</td><td>22S</td><td>160A</td><td>200A</td><td class="no">—</td><td>1A</td><td>0.5A</td><td class="no">—</td><td class="yes">Да</td><td class="no">—</td><td>Phase Side</td><td class="no">—</td></tr>
+            <tr><td>VESC Classic+ 100V</td><td>100V</td><td>22S</td><td>300A</td><td>400A</td><td class="no">—</td><td>1A</td><td>0.5A</td><td class="no">—</td><td class="yes">Да</td><td class="no">—</td><td>Phase Side</td><td class="no">—</td></tr>
+            <tr><td>VESC Pronto 100V</td><td>100V</td><td>22S</td><td>150A</td><td>200A</td><td class="no">—</td><td>2A</td><td>5A</td><td class="yes">Да</td><td class="yes">Да</td><td>1GB</td><td>Phase Side</td><td class="yes">Potted</td></tr>
+            <tr><td>VESC Maxim 120V</td><td>120V</td><td>26S</td><td>400A</td><td>660A</td><td class="no">—</td><td>2A</td><td>5A</td><td class="yes">Да</td><td class="yes">Да</td><td>512MB</td><td>Phase Side</td><td class="yes">Potted</td></tr>
+            <tr><td>VESC Maxim 150V</td><td>150V</td><td>32S</td><td>250A</td><td>400A</td><td class="no">—</td><td>2A</td><td>5A</td><td class="yes">Да</td><td class="yes">Да</td><td>512MB</td><td>Phase Side</td><td class="yes">Potted</td></tr>
+            <tr><td>VESC Maxim+ 120V</td><td>120V</td><td>26S</td><td>660A</td><td>1000A</td><td class="no">—</td><td>2A</td><td>5A</td><td class="yes">Да</td><td class="yes">Да</td><td>512MB</td><td>Phase Side</td><td class="yes">Potted</td></tr>
+            <tr><td>VESC Maxim+ 150V</td><td>150V</td><td>32S</td><td>420A</td><td>660A</td><td class="no">—</td><td>2A</td><td>5A</td><td class="yes">Да</td><td class="yes">Да</td><td>512MB</td><td>Phase Side</td><td class="yes">Potted</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <!-- VESC 100A (Flipsky / Maytech) -->
-    <div class="product" data-category="controller">
-      <div class="product-category">Контроллер</div>
-      <h3>VESC 100A (V6.0)</h3>
-      <div class="product-desc">
-        Открытая платформа VESC с прошивкой VESC Tool. Гибкая настройка кривых газа, рекуперации и ограничений. Подходит для DIY-сборок, где важна тонкая управляемость. Версии от Flipsky, Maytech и других производителей.
-      </div>
-      <div class="product-specs">
-        <div><span>Напряжение:</span> <span>до 50V (зависит от версии)</span></div>
-        <div><span>Постоянный ток:</span> <span>100A</span></div>
-        <div><span>Прошивка:</span> <span>VESC (open source)</span></div>
-        <div><span>Связь:</span> <span>UART / CAN / PPM</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">~$85–$103 <small>/ ~8 000–10 000 ₽</small></div>
-      </div>
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" data-filter="all">Все</button>
+      <button class="filter-btn" data-filter="controllers">Контроллеры</button>
+      <button class="filter-btn" data-filter="suspension">Подвеска</button>
+      <button class="filter-btn" data-filter="brakes">Тормоза</button>
+      <button class="filter-btn" data-filter="batteries">Батареи / BMS</button>
     </div>
 
-    <!-- Ambrosini RS-500s -->
-    <div class="product" data-category="controller">
-      <div class="product-category">Контроллер</div>
-      <h3>Ambrosini e-Racing RS-500s</h3>
-      <div class="product-desc">
-        Гоночный ESC для соревновательных электросамокатов. Встроенный блок управления мощностью. Ориентирован на высокие токи и экстремальные нагрузки. Премиальный сегмент, используется в профессиональных сборках.
-      </div>
-      <div class="product-specs">
-        <div><span>Напряжение:</span> <span>до 92V (22S)</span></div>
-        <div><span>Тип:</span> <span>FOC / гоночный</span></div>
-        <div><span>Блок мощности:</span> <span>в комплекте</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">~€580 <small>/ ~55 000 ₽</small></div>
-      </div>
-    </div>
-
-    <!-- Kelly KLS7218S -->
-    <div class="product" data-category="controller">
-      <div class="product-category">Контроллер</div>
-      <h3>Kelly KLS7218S</h3>
-      <div class="product-desc">
-        Синусоидальный контроллер от известного бренда Kelly. Стабильная работа, хорошая перегрузочная способность. Версия Plug & Play с готовой проводкой и разъёмами упрощает установку.
-      </div>
-      <div class="product-specs">
-        <div><span>Напряжение:</span> <span>72V</span></div>
-        <div><span>Ток:</span> <span>200A</span></div>
-        <div><span>Тип:</span> <span>Синусоида</span></div>
-        <div><span>Версия:</span> <span>Plug & Play</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">~€429 <small>/ ~42 000 ₽</small></div>
-      </div>
-    </div>
-
-    <!-- ================= БАТАРЕИ ================= -->
-
-    <!-- 60V кастом -->
-    <div class="product" data-category="battery">
-      <div class="product-category">Батарея</div>
-      <h3>Кастомная сборка 60V</h3>
-      <div class="product-desc">
-        Сборка на ячейках 18650/21700 под конкретные габариты деки. Встроенный BMS с защитой. Ёмкость и токовые характеристики обсуждаются индивидуально. Подходит для апгрейда с 48V на 60V с заменой контроллера.
-      </div>
-      <div class="product-specs">
-        <div><span>Напряжение:</span> <span>60V</span></div>
-        <div><span>Ёмкость:</span> <span>10–30 Ah (кастом)</span></div>
-        <div><span>BMS:</span> <span>встроенный</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">от ~$200 <small>/ уточнять у сборщика</small></div>
-      </div>
-    </div>
-
-    <!-- 72V кастом -->
-    <div class="product" data-category="battery">
-      <div class="product-category">Батарея</div>
-      <h3>Кастомная сборка 72V</h3>
-      <div class="product-desc">
-        Высоковольтная сборка для мощных моторов и контроллеров (Fardriver, Kelly). Требует качественного BMS и правильной изоляции. Распространённый формат для сборок на 3000–5000W.
-      </div>
-      <div class="product-specs">
-        <div><span>Напряжение:</span> <span>72V</span></div>
-        <div><span>Ёмкость:</span> <span>20–40 Ah (кастом)</span></div>
-        <div><span>Ток разряда:</span> <span>50–100A+</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">от ~$350 <small>/ зависит от ёмкости</small></div>
-      </div>
-    </div>
-
-    <!-- 84V батарея -->
-    <div class="product" data-category="battery">
-      <div class="product-category">Батарея</div>
-      <h3>84V 30Ah (готовый пак)</h3>
-      <div class="product-desc">
-        Готовый литиевый пак с BMS и зарядным устройством. Рассчитан на моторы до 6700W. Подходит для экстремальных сборок, где нужен высокий вольтаж и запас ёмкости. Вес ~13 кг, габариты уточняются у продавца.
-      </div>
-      <div class="product-specs">
-        <div><span>Напряжение:</span> <span>84V</span></div>
-        <div><span>Ёмкость:</span> <span>30 Ah</span></div>
-        <div><span>Ток разряда:</span> <span>30A (кастом до 50A)</span></div>
-        <div><span>Циклы:</span> <span>1000+</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">~$910 <small>/ ~90 000 ₽</small></div>
-      </div>
-    </div>
-
-    <!-- ================= МОТОРЫ ================= -->
-
-    <!-- Lonnyo 11" 5000W -->
-    <div class="product" data-category="motor">
-      <div class="product-category">Мотор</div>
-      <h3>Lonnyo 11" 5000W</h3>
-      <div class="product-desc">
-        Высокомощный бесщёточный мотор-колесо без редуктора. Диапазон напряжений 52–120V, что даёт гибкость при сборке. Усиленный корпус с рёбрами охлаждения. Для сборок, нацеленных на скорость 70+ км/ч.
-      </div>
-      <div class="product-specs">
-        <div><span>Мощность:</span> <span>5000W (до 7000W)</span></div>
-        <div><span>Напряжение:</span> <span>52–120V</span></div>
-        <div><span>Момент:</span> <span>~120 Nm</span></div>
-        <div><span>Диаметр:</span> <span>11"</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">~$243–$404 <small>/ зависит от версии</small></div>
-      </div>
-    </div>
-
-    <!-- Lonnyo 10" 3000W -->
-    <div class="product" data-category="motor">
-      <div class="product-category">Мотор</div>
-      <h3>Lonnyo 10" 3000W</h3>
-      <div class="product-desc">
-        Популярный мотор для апгрейда самокатов с 10" колёсами. Работает с 48–72V, рекомендуемый ток контроллера ~45A. Скорость до 100 км/ч в зависимости от напряжения и настройки контроллера.
-      </div>
-      <div class="product-specs">
-        <div><span>Мощность:</span> <span>1000–3000W</span></div>
-        <div><span>Напряжение:</span> <span>48–72V</span></div>
-        <div><span>Момент:</span> <span>29–45 Nm</span></div>
-        <div><span>Вес:</span> <span>~5.1 кг</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">~$240 <small>/ ~23 000 ₽</small></div>
-      </div>
-    </div>
-
-    <!-- ================= ТОРМОЗА ================= -->
-
-    <!-- NUTT Y5 -->
-    <div class="product" data-category="brakes">
-      <div class="product-category">Тормоза</div>
-      <h3>NUTT Y5 (4-поршневые)</h3>
-      <div class="product-desc">
-        Гидравлические 4-поршневые тормоза с датчиком отключения мотора. Усиленное торможение для высокоскоростных самокатов. Герметичная конструкция, возможность установки в разных конфигурациях. Роторы 140/160 мм.
-      </div>
-      <div class="product-specs">
-        <div><span>Тип:</span> <span>4-поршневые гидравлические</span></div>
-        <div><span>Ротор:</span> <span>140/160 мм</span></div>
-        <div><span>Датчик:</span> <span>отключение мотора</span></div>
-        <div><span>Гарантия:</span> <span>1 год</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">~$75–$95 <small>/ ~7 000–9 000 ₽</small></div>
-      </div>
-    </div>
-
-    <!-- Magura MT5e -->
-    <div class="product" data-category="brakes">
-      <div class="product-category">Тормоза</div>
-      <h3>Magura MT5e</h3>
-      <div class="product-desc">
-        Немецкое качество для e-bike и мощных самокатов. 4-поршневой суппорт, встроенный переключатель для отключения мотора и стоп-сигнала. Отличная модуляция и стабильность при длительном торможении. Минеральное масло Royal Blood.
-      </div>
-      <div class="product-specs">
-        <div><span>Тип:</span> <span>4-поршневые гидравлические</span></div>
-        <div><span>Ротор:</span> <span>180/203/220 мм</span></div>
-        <div><span>Особенность:</span> <span>датчик отключения</span></div>
-        <div><span>Вес:</span> <span>~255 г (без ротора)</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">~$120–$160 <small>/ ~11 000–15 000 ₽</small></div>
-      </div>
-    </div>
-
-    <!-- Good State -->
-    <div class="product" data-category="brakes">
-      <div class="product-category">Тормоза</div>
-      <h3>Good State (гидравлика)</h3>
-      <div class="product-desc">
-        Бюджетный вариант гидравлических тормозов для повседневных самокатов. В ручке установлена кнопка, размыкающая контакт при нажатии для отключения мотора. Подходит для моделей M4, M5, Max Speed и подобных.
-      </div>
-      <div class="product-specs">
-        <div><span>Тип:</span> <span>Гидравлические</span></div>
-        <div><span>Совместимость:</span> <span>M4 / M5 / G2 Pro</span></div>
-        <div><span>Датчик:</span> <span>в ручке</span></div>
-      </div>
-      <div class="product-footer">
-        <div class="price">уточнять у продавца <small>/ бюджетный сегмент</small></div>
-      </div>
-    </div>
+    <div class="catalog-grid" id="catalogGrid"></div>
 
   </div>
-</section>
 
-<footer>
-  © 2026 SevElictricDirectory — Справочный материал. Цены ориентировочные и зависят от продавца. Любой тюнинг лишает гарантии. Будьте осторожны на дорогах.
-  <div class="creator-line">Создатель: <span>Konstantin Polehin</span></div>
-</footer>
+  <script>
+    // SVG иконки для категорий (заглушки вместо фото)
+    const SVG_ICONS = {
+      controllers: `<svg viewBox="0 0 24 24" fill="none" stroke="#0071e3" stroke-width="1.5"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h2M7 14h2M15 10h2M15 14h2"/><circle cx="12" cy="12" r="1.5"/></svg>`,
+      suspension: `<svg viewBox="0 0 24 24" fill="none" stroke="#0071e3" stroke-width="1.5"><path d="M12 2v20M8 6h8M8 10h8M8 14h8M8 18h8"/><circle cx="12" cy="4" r="2"/><circle cx="12" cy="20" r="2"/></svg>`,
+      brakes: `<svg viewBox="0 0 24 24" fill="none" stroke="#0071e3" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2"/></svg>`,
+      batteries: `<svg viewBox="0 0 24 24" fill="none" stroke="#0071e3" stroke-width="1.5"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/><path d="M6 11v2M9 11v2M12 11v2"/></svg>`
+    };
 
-<script>
-  // Эффект свечения курсора на карточках
-  const products = document.querySelectorAll('.product');
-  products.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
-      card.style.setProperty('--my', `${e.clientY - rect.top}px`);
-    });
-  });
+    const catalogData = [
+      // ============ КОНТРОЛЛЕРЫ VESC LABS (11) ============
+      { category: "controllers", name: "VESC Minim 100V", brand: "VESC Labs", specs: "100V | 22S | 50A пост. / 65A пик | 3kW | IMU", price: "~ €120–150", desc: "Компактный контроллер с интегрированным IMU. Для лёгких сборок и робототехники.", tag: "VESC Labs" },
+      { category: "controllers", name: "VESC Duet XS 60V", brand: "VESC Labs", specs: "60V | 13S | 80A пост. / 100A пик | Dual | 5kW", price: "~ €180–220", desc: "Двухмоторный контроллер для компактных сборок. Два независимых канала.", tag: "VESC Labs" },
+      { category: "controllers", name: "VESC Duet XS 100V", brand: "VESC Labs", specs: "100V | 22S | 50A пост. / 65A пик | Dual | 6kW", price: "~ €200–240", desc: "Двухмоторный контроллер на 100V. Для мощных лёгких транспортных средств.", tag: "VESC Labs" },
+      { category: "controllers", name: "VESC Duet", brand: "VESC Labs", specs: "100V | 22S | 140A пост. / 200A пик | Dual | 8kW | ESP32", price: "~ €280–320", desc: "Старший двухмоторный контроллер с ESP32 и 512MB памяти. Для серьёзных сборок.", tag: "VESC Labs" },
+      { category: "controllers", name: "VESC Classic 100V", brand: "VESC Labs", specs: "100V | 22S | 160A пост. / 200A пик | 10kW | IMU", price: "~ €180–220", desc: "Классический одноканальный контроллер с IMU. Низкий профиль для плотной компоновки.", tag: "VESC Labs" },
+      { category: "controllers", name: "VESC Classic+ 100V", brand: "VESC Labs", specs: "100V | 22S | 300A пост. / 400A пик | 20kW", price: "~ €250–300", desc: "Улучшенная версия Classic с удвоенным током. Для мощных одноканальных сборок.", tag: "VESC Labs" },
+      { category: "controllers", name: "VESC Pronto 100V", brand: "VESC Labs", specs: "100V | 22S | 150A пост. / 200A пик | 10kW | Potted", price: "~ €280–320", desc: "Полностью залитый (potted) контроллер. Влагозащищённый, для суровых условий.", tag: "VESC Labs" },
+      { category: "controllers", name: "VESC Maxim 120V", brand: "VESC Labs", specs: "120V | 26S | 400A пост. / 600A пик | 30kW | Potted", price: "~ €450–520", desc: "Высоковольтный контроллер с заливкой. Для мощных транспортных средств.", tag: "VESC Labs" },
+      { category: "controllers", name: "VESC Maxim 150V", brand: "VESC Labs", specs: "150V | 32S | 250A пост. / 400A пик | 30kW | Potted", price: "~ €450–520", desc: "Максимальное напряжение 150V. Для экстремальных проектов.", tag: "VESC Labs" },
+      { category: "controllers", name: "VESC Maxim+ 120V", brand: "VESC Labs", specs: "120V | 26S | 660A пост. / 1000A пик | 50kW | Potted", price: "~ €650–750", desc: "Самый мощный контроллер VESC Labs на 120V. 50kW пиковой мощности.", tag: "VESC Labs" },
+      { category: "controllers", name: "VESC Maxim+ 150V", brand: "VESC Labs", specs: "150V | 32S | 420A пост. / 660A пик | 50kW | Potted", price: "~ €650–750", desc: "Флагман линейки Maxim+. 150V, 50kW, полная влагозащита.", tag: "VESC Labs" },
 
-  // Логика фильтрации
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const productGrid = document.getElementById('productGrid');
+      // ============ ДРУГИЕ КОНТРОЛЛЕРЫ (10) ============
+      { category: "controllers", name: "Flipsky 75100 Pro V2.0", brand: "Flipsky", specs: "14–84V | 100A | FOC | Bluetooth", price: "~ $204", desc: "Народный VESC-контроллер. Открытая прошивка, рекуперация.", tag: "VESC" },
+      { category: "controllers", name: "Kelly KLS7275D", brand: "Kelly", specs: "24–72V | 500A пик | FOC | RS232 | IP66", price: "~ 21 108 грн", desc: "Промышленный синусный контроллер. Настройка через ПК.", tag: "Kelly" },
+      { category: "controllers", name: "Kelly KLS14401-8080IPS", brand: "Kelly", specs: "24–144V | 400A | BLDC | Оптоизолированный", price: "~ 44 141 грн", desc: "Высоковольтный контроллер для экстремальных проектов.", tag: "Kelly" },
+      { category: "controllers", name: "Kelly KLS72601", brand: "Kelly", specs: "24–72V | 600A пик | FOC", price: "~ 18 000–22 000 грн", desc: "Среднее звено между 7275D и 14401.", tag: "Kelly" },
+      { category: "controllers", name: "Kelly KAC72701", brand: "Kelly", specs: "24–72V | 700A | AC Induction", price: "~ 34 324 грн", desc: "Для асинхронных двигателей. Не для BLDC.", tag: "Kelly AC" },
+      { category: "controllers", name: "FarDriver ND72450", brand: "FarDriver", specs: "48–72V | 120A / 190A пик | FOC | BT", price: "~ ¥810", desc: "Синусоидальный контроллер с Bluetooth. Бюджетный вариант.", tag: "FarDriver" },
+      { category: "controllers", name: "FarDriver ND72680", brand: "FarDriver", specs: "48–72V | 260A | FOC | BT", price: "~ $165–$201", desc: "Для моторов 5000W+. Алюминиевый корпус.", tag: "FarDriver" },
+      { category: "controllers", name: "FarDriver ND961200", brand: "FarDriver", specs: "72–96V | 600A / 1200A пик | IP67", price: "~ $390–$620", desc: "Флагман для электроциклов. До 140 км/ч.", tag: "FarDriver" },
+      { category: "controllers", name: "Ambrosini RS-500s", brand: "Ambrosini", specs: "12–96V | 300A / 580A пик | VESC", price: "~ €579.99", desc: "Гоночный контроллер с Power Control Unit.", tag: "Ambrosini" },
+      { category: "controllers", name: "Makerbase VESC 75100", brand: "Makerbase", specs: "16–75V | 100A | FOC", price: "~ $95–$120", desc: "Бюджетная альтернатива Flipsky.", tag: "VESC" },
 
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      // ============ ПОДВЕСКА (12) ============
+      { category: "suspension", name: "KKE 135mm 2000LBS/IN", brand: "KKE", specs: "135mm | 2000 LBS/IN | Регулировка", price: "~ $100–150", desc: "Апгрейд для VSETT, Kaabo, Kugoo. 90+ кг.", tag: "KKE" },
+      { category: "suspension", name: "KKE 37mm Front Fork", brand: "KKE", specs: "37mm | Ход 210mm | Перевертыш", price: "~ $799", desc: "Вилка для SurRon, Talaria, Segway X260.", tag: "KKE" },
+      { category: "suspension", name: "KKE Rear Shock 220mm", brand: "KKE", specs: "220mm | 1800–2200 LBS", price: "~ $120–180", desc: "Для кастомных рам с увеличенным ходом.", tag: "KKE" },
+      { category: "suspension", name: "KKE Ultra Bee Rear Shock", brand: "KKE", specs: "450 lbs | Штатный Ultra Bee", price: "~ $630", desc: "Оригинальная запчасть. Без крепежа.", tag: "KKE" },
+      { category: "suspension", name: "KKE Light Bee Rear Shock", brand: "KKE", specs: "450 lbs | Штатный Light Bee", price: "~ $370", desc: "Стоковый амортизатор Light Bee.", tag: "KKE" },
+      { category: "suspension", name: "KKE Ultra Bee Spring 500 lbs", brand: "KKE", specs: "500 lbs | 205mm", price: "~ $80–100", desc: "Усиленная пружина для тяжёлых райдеров.", tag: "KKE" },
+      { category: "suspension", name: "KKE Light Bee Modified Shock", brand: "KKE", specs: "Модифицированный | Улучшенное демпфирование", price: "~ $400–450", desc: "Доработанная версия для Light Bee.", tag: "KKE" },
+      { category: "suspension", name: "KKE 165mm 1800LBS/IN", brand: "KKE", specs: "165mm | 1800 LBS/IN", price: "~ $90–130", desc: "Короткий амортизатор для компактных сборок.", tag: "KKE" },
+      { category: "suspension", name: "KKE 190mm 2200LBS/IN", brand: "KKE", specs: "190mm | 2200 LBS/IN", price: "~ $110–150", desc: "Средняя длина. Универсальное применение.", tag: "KKE" },
+      { category: "suspension", name: "KKE 240mm 2000LBS/IN", brand: "KKE", specs: "240mm | 2000 LBS/IN", price: "~ $130–170", desc: "Длинноходный амортизатор для кастомных маятников.", tag: "KKE" },
+      { category: "suspension", name: "KKE Front Fork 32mm", brand: "KKE", specs: "32mm | Ход 180mm", price: "~ $550–650", desc: "Более лёгкая вилка для городских сборок.", tag: "KKE" },
+      { category: "suspension", name: "KKE Rear Shock 280mm", brand: "KKE", specs: "280mm | 2200 LBS/IN", price: "~ $160–200", desc: "Максимальная длина в линейке. Для экстремальных рам.", tag: "KKE" },
 
-      const filterValue = btn.getAttribute('data-filter');
-      const products = document.querySelectorAll('.product');
+      // ============ ТОРМОЗА (12) ============
+      { category: "brakes", name: "Nutt Y5-D (4 поршня)", brand: "Nutt", specs: "4 поршня | Гидравлика | Датчик", price: "~ $75–$95", desc: "Симметричное сжатие. Мощное торможение.", tag: "Nutt" },
+      { category: "brakes", name: "Nutt Y5ZS (4 поршня)", brand: "Nutt", specs: "4 поршня | Датчик | Pre-bled", price: "~ $79.99", desc: "Улучшенная версия Y5. Прокачаны с завода.", tag: "Nutt" },
+      { category: "brakes", name: "Nutt A4-D (4 поршня)", brand: "Nutt", specs: "4 поршня | Магнитный датчик", price: "~ $69.99–$85", desc: "Бюджетный вариант со скрытой проводкой.", tag: "Nutt" },
+      { category: "brakes", name: "Nutt 2-поршневой комплект", brand: "Nutt", specs: "2 поршня | Комплект | 135/220 см", price: "~ 8000₽", desc: "Базовый гидравлический комплект для города.", tag: "Nutt" },
+      { category: "brakes", name: "Magura MT5e (4 поршня)", brand: "Magura", specs: "4 поршня | HIGO-CLOSER | Royal Blood", price: "~ $161–$238", desc: "Эталон надёжности. Nami, Kaabo.", tag: "Magura" },
+      { category: "brakes", name: "Magura MT4e (2 поршня)", brand: "Magura", specs: "2 поршня | HIGO-CLOSER", price: "~ €120–150", desc: "Облегчённая версия для города.", tag: "Magura" },
+      { category: "brakes", name: "Magura MT5 (без датчика)", brand: "Magura", specs: "4 поршня | Без HIGO-CLOSER", price: "~ $140–$180", desc: "Для кастомных ручек или отдельных датчиков.", tag: "Magura" },
+      { category: "brakes", name: "Magura MT Trail Sport", brand: "Magura", specs: "4/2 поршня | Комплект", price: "~ €180–220", desc: "Комплект: 4-поршневой перед + 2-поршневой зад.", tag: "Magura" },
+      { category: "brakes", name: "Nutt Y5-D Dual Set", brand: "Nutt", specs: "2x Y5-D | Комплект", price: "~ $150–180", desc: "Два 4-поршневых тормоза в комплекте.", tag: "Nutt" },
+      { category: "brakes", name: "Nutt A4-D Dual Set", brand: "Nutt", specs: "2x A4-D | Комплект", price: "~ $130–160", desc: "Два бюджетных 4-поршневых тормоза.", tag: "Nutt" },
+      { category: "brakes", name: "Magura MT7 Pro", brand: "Magura", specs: "4 поршня | Гоночный | Без датчика", price: "~ €250–300", desc: "Топовый гоночный тормоз. Максимальная модуляция.", tag: "Magura" },
+      { category: "brakes", name: "Nutt Y5-D с роторами 160mm", brand: "Nutt", specs: "4 поршня | 160mm роторы", price: "~ $95–115", desc: "Комплект с роторами 160mm.", tag: "Nutt" },
 
-      products.forEach(product => {
-        const category = product.getAttribute('data-category');
-        if (filterValue === 'all' || filterValue === category) {
-          product.style.display = 'flex';
-          setTimeout(() => {
-            product.style.opacity = '1';
-            product.style.transform = 'scale(1)';
-          }, 10);
-        } else {
-          product.style.opacity = '0';
-          product.style.transform = 'scale(0.9)';
-          setTimeout(() => {
-            product.style.display = 'none';
-          }, 300);
+      // ============ БАТАРЕИ / BMS (16) ============
+      { category: "batteries", name: "Сборка 72V 40Ah (20S10P Samsung 40T)", brand: "Custom", specs: "72V | 40Ah | 100–150A BMS", price: "~ $800", desc: "Высокотоковые элементы. Для 3000–5000W.", tag: "72V" },
+      { category: "batteries", name: "Сборка 60V 50Ah (BMS 100A)", brand: "Custom", specs: "60V | 50Ah | 100A BMS", price: "Индивидуально", desc: "Для дальних поездок. 80–120 км.", tag: "60V" },
+      { category: "batteries", name: "Сборка 84V 30Ah (20S6P Molicel P42A)", brand: "Custom", specs: "84V | 30Ah | 150A BMS", price: "Индивидуально", desc: "Спортивные сборки. Высокий ток.", tag: "84V" },
+      { category: "batteries", name: "LiFePO4 72V 35–100Ah", brand: "OEM", specs: "72V | 35–100Ah | 4000 циклов", price: "~ $268–$682", desc: "Безопаснее и живучее Li-Ion.", tag: "LiFePO4" },
+      { category: "batteries", name: "Сборка 96V 40Ah (24S8P P42A)", brand: "Custom", specs: "96V | 40Ah | 200A BMS", price: "Индивидуально", desc: "Для FarDriver ND961200 и подобных.", tag: "96V" },
+      { category: "batteries", name: "Daly Smart BMS 20S 100A", brand: "Daly", specs: "20S (84V) | 100A | BT", price: "~ $60–90", desc: "Проверенный бренд. Точность ±0.025V.", tag: "BMS" },
+      { category: "batteries", name: "Daly Smart BMS 24S 150A", brand: "Daly", specs: "24S (100.8V) | 150A | CAN", price: "~ $90–130", desc: "Для высоковольтных сборок на 24S.", tag: "BMS" },
+      { category: "batteries", name: "Daly Smart BMS 32S 250A", brand: "Daly", specs: "32S (134.4V) | 250A | CAN/RS485", price: "~ $150–220", desc: "Топовая модель для экстремальных сборок.", tag: "BMS" },
+      { category: "batteries", name: "JBD Smart BMS 20S 80A", brand: "JBD", specs: "20S | 80A | BT", price: "~ $35–55", desc: "Бюджетная альтернатива Daly.", tag: "BMS" },
+      { category: "batteries", name: "ANT BMS 24S 200A", brand: "ANT", specs: "24S | 200A | Дисплей", price: "~ $80–120", desc: "С дисплеем и расширенными настройками.", tag: "BMS" },
+      { category: "batteries", name: "Сборка 72V 30Ah (20S8P LG M50LT)", brand: "Custom", specs: "72V | 30Ah | 80A BMS", price: "Индивидуально", desc: "Баланс ёмкости и тока. Для города.", tag: "72V" },
+      { category: "batteries", name: "Сборка 60V 40Ah (16S8P Samsung 50E)", brand: "Custom", specs: "60V | 40Ah | 80A BMS", price: "Индивидуально", desc: "Ёмкость для дальних поездок.", tag: "60V" },
+      { category: "batteries", name: "Сборка 84V 24Ah (20S6P P42A)", brand: "Custom", specs: "84V | 24Ah | 120A BMS", price: "Индивидуально", desc: "Лёгкая спортивная сборка.", tag: "84V" },
+      { category: "batteries", name: "Daly Smart BMS 16S 100A", brand: "Daly", specs: "16S (67.2V) | 100A | BT", price: "~ $50–70", desc: "Для 60V сборок.", tag: "BMS" },
+      { category: "batteries", name: "JBD Smart BMS 24S 100A", brand: "JBD", specs: "24S | 100A | BT", price: "~ $60–80", desc: "Бюджетный BMS для 24S.", tag: "BMS" },
+      { category: "batteries", name: "Сборка 48V 20Ah (13S8P Samsung 50E)", brand: "Custom", specs: "48V | 20Ah | 60A BMS", price: "Индивидуально", desc: "Для лёгких городских сборок.", tag: "48V" }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('catalogGrid');
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const searchInput = document.getElementById('searchInput');
+      const preloader = document.getElementById('preloader');
+      const mainContent = document.getElementById('mainContent');
+      const tableToggle = document.getElementById('tableToggle');
+      const tableWrap = document.getElementById('tableWrap');
+
+      // Preloader
+      setTimeout(() => {
+        preloader.style.opacity = '0';
+        setTimeout(() => {
+          preloader.style.display = 'none';
+          mainContent.style.opacity = '1';
+        }, 400);
+      }, 700);
+
+      // Toggle table
+      let tableVisible = true;
+      tableToggle.addEventListener('click', () => {
+        tableVisible = !tableVisible;
+        tableWrap.style.display = tableVisible ? 'block' : 'none';
+        tableToggle.textContent = tableVisible ? 'Свернуть таблицу' : 'Развернуть таблицу';
+      });
+
+      // Render
+      function renderCards() {
+        const filter = document.querySelector('.filter-btn.active').dataset.filter;
+        const query = searchInput.value.toLowerCase().trim();
+
+        let filtered = catalogData;
+        if (filter !== 'all') {
+          filtered = filtered.filter(item => item.category === filter);
         }
+        if (query) {
+          filtered = filtered.filter(item =>
+            item.name.toLowerCase().includes(query) ||
+            item.brand.toLowerCase().includes(query) ||
+            item.specs.toLowerCase().includes(query) ||
+            item.desc.toLowerCase().includes(query) ||
+            item.tag.toLowerCase().includes(query)
+          );
+        }
+
+        grid.innerHTML = '';
+        if (filtered.length === 0) {
+          grid.innerHTML = '<div class="empty-msg">Ничего не найдено. Попробуйте изменить запрос или фильтр.</div>';
+          return;
+        }
+
+        filtered.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="card-img">${SVG_ICONS[item.category] || ''}</div>
+            <div class="card-head">
+              <div class="card-head-text">
+                <div class="card-title">${item.name}</div>
+                <div class="card-brand">${item.brand}</div>
+              </div>
+            </div>
+            <div class="card-specs">${item.specs}</div>
+            <p class="card-desc">${item.desc}</p>
+            <div class="card-footer">
+              <span class="card-price">${item.price}</span>
+              <span class="card-tag">${item.tag}</span>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+      renderCards();
+
+      // Filters
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderCards();
+        });
+      });
+
+      // Search
+      let debounceTimer;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(renderCards, 200);
       });
     });
-  });
-</script>
-
+  </script>
 </body>
 </html>
